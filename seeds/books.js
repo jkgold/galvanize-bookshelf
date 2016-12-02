@@ -88,6 +88,6 @@ knex('books').insert({
     ]);
   })
   .then(function(){
-   knex.raw("SELECT setval('books_id_seq', (SELECT MAX(id) FROM books))")
+  return knex.raw("SELECT setval('books_id_seq', (SELECT MAX(id) FROM books))")
   });
 };

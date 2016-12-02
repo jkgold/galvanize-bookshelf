@@ -53,31 +53,37 @@ router.get('/books', (_req, res, next) => {
       });
     });
 
+    router.patch('/books/:id', (req, res, next) => {
+      var body = req.body;
+      var updateBook = {
+        title: body.title,
+        author: body.author,
+        genre: body.genre,
+        description: body.description,
+        cover_url: body.coverUrl
+      };
+     knex('books')
+     .where('id', req.params.id)
+     .first()
+     .then((data) => {
 
-
-
-
-  //  router.patch('/books/:id', (req, res, next) => {
-  //    knex('books')
-  //    .where('id', req.params.id)
-  //    .first()
-  //    .then((book) => {
-  //     const bookCamel = camelizeKeys(book);
-  //      if (!book) {
-  //        return next();
-  //      }
-   //
-  //      return knex('books')
-  //       .update({ name: req.body.name }, "*")
-  //       .where('id', req.params.id);
-  //    })
-  //    .then((bookCamel) => {
-  //      res.send(bookCamel[0]);
-  //    })
-  //    .catch((err) => {
-  //      next(err);
-  //    });
-  //  });
+       if (!data) {
+         return next();
+       }
+       return knex('books')
+        .update(decamelizeKeys(updateBook) , "*")
+        .where('id', req.params.id);
+     })
+     .then((data) => {
+       const deCamelBook = data[0];
+       delete deCamelBook.created_at;
+       delete deCamelBook.updated_at;
+       res.send(camelizeKeys(data[0]));
+     })
+     .catch((err) => {
+       next(err);
+     });
+   });
 
 
 
