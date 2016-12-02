@@ -84,6 +84,34 @@ router.get('/books', (_req, res, next) => {
        next(err);
      });
    });
+//begin delete
+router.delete('/books/:id', (req, res, next) => {
+  let book;
+
+  knex('books')
+    .where('id', req.params.id)
+    .first()
+    .then((row) => {
+      book = row;
+      if (!row) {
+        return next();
+      }
+
+
+      return knex('books')
+        .del()
+        .where('id', req.params.id);
+    })
+    .then(() => {
+      delete book.id;
+      res.send(camelizeKeys(book));
+    })
+    .catch((err) => {
+      next(err);
+    });
+});
+
+
 
 
 
